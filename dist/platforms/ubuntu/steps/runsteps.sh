@@ -16,7 +16,7 @@ if [ "$SKIP_ACTIVATION" != "true" ]; then
 else
   echo "Skipping activation"
 fi
-
+sleep 5
 source /steps/build.sh
 
 if [ "$SKIP_ACTIVATION" != "true" ]; then
