@@ -80,6 +80,18 @@ elif [[ -n "$UNITY_LICENSING_SERVER" ]]; then
 
     echo "Acquired floating license: \"$FLOATING_LICENSE\" with timeout $FLOATING_LICENSE_TIMEOUT"
   fi
+
+  echo "[INFO] Waiting for LicensingClient process to start..."
+  for i in {1..10}; do
+    if pgrep -f "LicenseClient-root" >/dev/null 2>&1; then
+      echo "[INFO] LicensingClient process detected (attempt $i)"
+      # give it a few extra seconds to finish internal initialization
+      sleep 5
+      break
+    fi
+    echo "[DEBUG] LicensingClient not running yet (attempt $i)..."
+    sleep 3
+  done
 else
   #
   # NO LICENSE ACTIVATION STRATEGY MATCHED
