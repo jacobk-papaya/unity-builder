@@ -24,7 +24,7 @@ if [[ -n "$UNITY_SERIAL" && -n "$UNITY_EMAIL" && -n "$UNITY_PASSWORD" ]]; then
   delay=15
 
   # Loop until UNITY_EXIT_CODE is 0 or retry count reaches 5
-  while [[ $retry_count -lt 5 ]]
+  while [[ $retry_count -lt 6 ]]
   do
     # Activate license
     unity-editor \
