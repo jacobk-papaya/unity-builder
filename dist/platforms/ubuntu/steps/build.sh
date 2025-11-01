@@ -117,33 +117,51 @@ echo "###########################"
 echo "#    Building project     #"
 echo "###########################"
 echo ""
+unity-editor -quit -batchmode -nographics \
+  -projectPath /project \
+  -logFile /dev/stdout \
+  -executeMethod UnityEditor.PackageManager.Client.Resolve
+
+retry_count=0
+delay=20
 
 # Reference: https://docs.unity3d.com/2019.3/Documentation/Manual/CommandLineArguments.html
+while [[ $retry_count -lt 3 ]]; do
+  unity-editor \
+    -logfile /dev/stdout \
+    $( [ "${MANUAL_EXIT}" == "true" ] || echo "-quit" ) \
+    -customBuildName "$BUILD_NAME" \
+    -projectPath "$UNITY_PROJECT_PATH" \
+    $( [ -z "$BUILD_PROFILE" ] && echo "-buildTarget $BUILD_TARGET" ) \
+    -customBuildTarget "$BUILD_TARGET" \
+    -customBuildPath "$CUSTOM_BUILD_PATH" \
+    -customBuildProfile "$BUILD_PROFILE" \
+    ${BUILD_PROFILE:+-activeBuildProfile} ${BUILD_PROFILE:+"$BUILD_PROFILE"} \
+    -executeMethod "$BUILD_METHOD" \
+    -buildVersion "$VERSION" \
+    -androidVersionCode "$ANDROID_VERSION_CODE" \
+    -androidKeystoreName "$ANDROID_KEYSTORE_NAME" \
+    -androidKeystorePass "$ANDROID_KEYSTORE_PASS" \
+    -androidKeyaliasName "$ANDROID_KEYALIAS_NAME" \
+    -androidKeyaliasPass "$ANDROID_KEYALIAS_PASS" \
+    -androidTargetSdkVersion "$ANDROID_TARGET_SDK_VERSION" \
+    -androidExportType "$ANDROID_EXPORT_TYPE" \
+    -androidSymbolType "$ANDROID_SYMBOL_TYPE" \
+    $CUSTOM_PARAMETERS
+  
+  # Catch exit code
+  BUILD_EXIT_CODE=$?
 
-unity-editor \
-  -logfile /dev/stdout \
-  $( [ "${MANUAL_EXIT}" == "true" ] || echo "-quit" ) \
-  -customBuildName "$BUILD_NAME" \
-  -projectPath "$UNITY_PROJECT_PATH" \
-  $( [ -z "$BUILD_PROFILE" ] && echo "-buildTarget $BUILD_TARGET" ) \
-  -customBuildTarget "$BUILD_TARGET" \
-  -customBuildPath "$CUSTOM_BUILD_PATH" \
-  -customBuildProfile "$BUILD_PROFILE" \
-  ${BUILD_PROFILE:+-activeBuildProfile} ${BUILD_PROFILE:+"$BUILD_PROFILE"} \
-  -executeMethod "$BUILD_METHOD" \
-  -buildVersion "$VERSION" \
-  -androidVersionCode "$ANDROID_VERSION_CODE" \
-  -androidKeystoreName "$ANDROID_KEYSTORE_NAME" \
-  -androidKeystorePass "$ANDROID_KEYSTORE_PASS" \
-  -androidKeyaliasName "$ANDROID_KEYALIAS_NAME" \
-  -androidKeyaliasPass "$ANDROID_KEYALIAS_PASS" \
-  -androidTargetSdkVersion "$ANDROID_TARGET_SDK_VERSION" \
-  -androidExportType "$ANDROID_EXPORT_TYPE" \
-  -androidSymbolType "$ANDROID_SYMBOL_TYPE" \
-  $CUSTOM_PARAMETERS
-
-# Catch exit code
-BUILD_EXIT_CODE=$?
+  if [[ $BUILD_EXIT_CODE -eq 0 ]]; then
+    echo "✅ Unity build succeeded on attempt #$((retry_count + 1))"
+    break
+  else
+    echo "::warning::Unity build failed (exit code: $BUILD_EXIT_CODE). Retrying in ${delay}s..."
+    ((retry_count++))
+    sleep $delay
+    delay=$((delay * 2))
+  fi
+done
 
 # Display results
 if [ $BUILD_EXIT_CODE -eq 0 ]; then
