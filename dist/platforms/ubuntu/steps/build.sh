@@ -159,9 +159,6 @@ while [[ $retry_count -lt 4 ]]; do
     echo "::warning::Unity build failed (exit code: $BUILD_EXIT_CODE). Retrying in ${delay}s..."
     ((retry_count++))
     sleep $delay
-    rm -rf "$UNITY_PROJECT_PATH/Library/ScriptAssemblies" \
-       "$UNITY_PROJECT_PATH/Library/ShaderCache" \
-       "$UNITY_PROJECT_PATH/Library/PackageCache"
     delay=$((delay * 2))
   fi
 done
