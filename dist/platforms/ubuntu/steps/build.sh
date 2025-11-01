@@ -126,7 +126,7 @@ retry_count=0
 delay=20
 
 # Reference: https://docs.unity3d.com/2019.3/Documentation/Manual/CommandLineArguments.html
-while [[ $retry_count -lt 3 ]]; do
+while [[ $retry_count -lt 4 ]]; do
   unity-editor \
     -logfile /dev/stdout \
     $( [ "${MANUAL_EXIT}" == "true" ] || echo "-quit" ) \
