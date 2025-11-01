@@ -118,7 +118,7 @@ echo "#    Building project     #"
 echo "###########################"
 echo ""
 unity-editor -quit -batchmode -nographics \
-  -projectPath /project \
+  -projectPath "$UNITY_PROJECT_PATH" \
   -logFile /dev/stdout \
   -executeMethod UnityEditor.PackageManager.Client.Resolve
 
