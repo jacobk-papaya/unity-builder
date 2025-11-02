@@ -82,7 +82,7 @@ elif [[ -n "$UNITY_LICENSING_SERVER" ]]; then
   fi
 
   echo "[INFO] Waiting for LicensingClient process to start..."
-  for i in {1..5}; do
+  for i in {1..6}; do
     if pgrep -f "LicenseClient-root" >/dev/null 2>&1; then
       echo "[INFO] LicensingClient process detected (attempt $i)"
       # give it a few extra seconds to finish internal initialization
@@ -90,7 +90,7 @@ elif [[ -n "$UNITY_LICENSING_SERVER" ]]; then
       break
     fi
     echo "[DEBUG] LicensingClient not running yet (attempt $i)..."
-    sleep 3
+    sleep 5
   done
 else
   #
