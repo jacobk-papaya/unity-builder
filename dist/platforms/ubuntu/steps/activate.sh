@@ -90,7 +90,7 @@ elif [[ -n "$UNITY_LICENSING_SERVER" ]]; then
       break
     fi
     echo "[DEBUG] LicensingClient not running yet (attempt $i)..."
-    sleep 5
+    sleep 10
   done
 else
   #
